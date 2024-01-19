@@ -1,0 +1,364 @@
+{% extends "base.html" %}
+{% block content  %}
+{% load static %}
+
+
+
+
+<ul class="breadcrumb">
+    <li><a href="#">Master</a></li>                    
+    <li class="active">Manage Employee</li>
+</ul>
+
+<div class="page-title">                    
+    <h2><span class="fa fa-arrow-circle-o-left"></span> Manage Employee</h2>
+</div>   
+
+<div class="page-content-wrap">
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col-md-6">
+            <div class="block">                                   
+                <div class="form-group">
+                    <label class="col-md-2 " >Name</label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" name="name">
+                    </div>
+                </div><br>
+
+                <div class="form-group">
+                    <label class="col-md-2 ">DOB</label>
+                    <div class="col-md-6">
+                       
+                            <input type="Date" id="date" class="form-control"  name="dob">
+                       
+                    </div>
+                </div><br>
+
+                <div class="form-group">
+                    <label class="col-md-2">Gender</label>
+                    <div class="col-md-6">
+                        <select class="form-control "  name="gender">
+                            <option value="0">Male</option>
+                            <option value="1">Female</option>
+                            <option value="2">Other</option>
+                        </select>
+                    </div>
+                </div><br>
+ 
+                <div class="form-group">
+                    <label class="col-md-2 ">Phone</label>
+                    <div class="col-md-6">
+                        <input type="tel" class="form-control" name="phone">
+                    </div>
+                </div><br>
+
+                <div class="form-group">
+                    <label class="col-md-2 ">E-mail:</label>
+                    <div class="col-md-6">
+                        <input type="text" value="" name="mail" class="form-control">                                        
+                    </div>
+                </div> <br>                         
+                                                                                       
+                <div class="form-group">
+                    <label class="col-md-2 ">Address</label>
+                    <div class="col-md-6">
+                        <textarea class="form-control" rows="5" name="address"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="block">
+
+                <div class="form-group">
+                    <label class="col-md-3 ">Qualification</label>
+                    <div class="col-md-6">                                        
+                        <select class="form-control " name="qua_status" >
+                            {% for i in qualification %}
+                                <option value="{{i.id}}">{{i.qname}}</option>
+                            {% endfor %}                        
+                        </select>
+                    </div>
+                </div><br>
+
+                <div class="form-group">
+                    <label class="col-md-3 ">Designation</label>
+                    <div class="col-md-6">                                        
+                        <select class="form-control " name="des_status">
+                            {% for i in designation %}
+                                <option value="{{i.id}}">{{i.dname}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div><br>
+
+                <div class="form-group">
+                    <label class="col-md-3 ">Department</label>
+                    <div class="col-md-6">                                        
+                        <select class="form-control" name="dpt_status">
+                            {% for i in department %}
+                                <option value="{{i.id}}">{{i.dpname}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div><br>
+
+                <div class="form-group">
+                    <label class="col-md-3 ">Employee_Category</label>
+                    <div class="col-md-6">                                        
+                        <select class="form-control" id="emp_cat" name="emp_status" onchange="showDropdowns()">
+                            {% for i in emp_catogory %}
+                            <option value="{{i.id}}+{{i.area}}">{{i.ename}}</option>
+                        {% endfor %}
+                        </select>
+                    </div>
+                </div><br>
+
+                
+                <div class="form-group">
+                    <label class="col-md-3 ">Salary</label>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" name="salary">
+                    </div>
+                </div><br>
+
+                <div class="form-group">
+                    <label class="col-md-3 ">Join date</label>
+                    <div class="col-md-6">
+                       
+                            <input type="Date" id="date" class="form-control"  name="joindate">
+                    
+                    </div>
+                </div><br>
+
+            
+                <div class="form-group">
+                    <label class="col-md-3 ">Photo</label>
+                    <div class="col-md-3">
+                        <a class="file-input-wrapper btn btn-default  fileinput"><span>Browse</span><input type="file" name="emp_photo" ></a>
+                    </div>
+                    
+                </div> 
+
+                
+                <div class="row" id="additionalDropdowns" style="display: none;">
+                <div class="panel panel-heading">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="col-md-2 ">Class</label>
+                            <select class="form-control" id="classDropdown" name="class_id">
+                                <option value="" selected disabled>select class</option>
+                                {% for i in class_details %}
+                                <option value="{{i.id}}">{{i.cname}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="col-md-2 ">Division</label>
+                            <select class="form-control" id="divisionDropdown" name="division_id">
+                                <option value="" selected disabled>select division</option>
+                                {% for i in division %}
+                                <option value="{{i.id}}">{{i.dname}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="col-md-2 ">Subject</label>
+                            <select class="form-control" id="subjectDropdown" name="subject_id">
+                                <option value="" selected disabled>select subject</option>
+                                {% for i in subject %}
+                                <option value="{{i.id}}">{{i.subject_name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    
+                </div>
+                <button class="btn-primary pull-right" onclick="displayCheckedItems()" type="button">ADD</button>
+               
+
+              <div class="panel panel-default">
+                <div class="row">
+                    <div class="panel-body">
+                        {% comment %} <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer"><div class="dataTables_length" id="DataTables_Table_0_length"><label>Show <select name="DataTables_Table_0_length" aria-controls="DataTables_Table_0" class="form-control"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select> entries</label></div><div id="DataTables_Table_0_filter" class="dataTables_filter"><label>Search:<input type="search" class="form-control " placeholder="" aria-controls="DataTables_Table_0"></label></div> {% endcomment %}
+                        <table class="table table-bordered" id="data-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Class</th>
+                                    <th>Division</th>
+                                    <th>Subject</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="table-body">
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+              </div>
+            </div>
+          
+        </div>
+    </div>
+    <div class="panel-footer">
+        <button class="btn btn-primary " type="reset">clear Form</button>
+        <button class="btn btn-primary pull-right" type="submit">Submit</button>
+    </div>
+  </form>
+</div>   
+              
+
+
+               
+                
+            
+                
+                    
+                                  
+
+
+<script>
+    {% if success %}
+    document.addEventListener('DOMContentLoaded',function () {
+     noty({text: '{{success}}', layout: 'topRight', timeout: 2000, type: 'success'});
+   });
+   {% endif %}
+
+   {% if danger %}
+    document.addEventListener('DOMContentLoaded',function () {
+     noty({text: '{{danger}}', layout: 'topRight', timeout: 2000, type: 'error'});
+   });
+   {% endif %}  
+</script>
+
+<script type="text/javascript" src="{% static 'js/demo_tables.js' %}"></script>
+
+
+
+ 
+
+
+<script>
+   
+
+    function displayCheckedItems() {
+
+       
+        // Get selected text from the dropdowns
+        const selectedClass = $("#classDropdown option:selected").text();
+        const selectedDivision = $("#divisionDropdown option:selected").text();
+        const selectedSubject = $("#subjectDropdown option:selected").text();
+    
+        // Check if any of the dropdowns is not selected
+
+        
+        if (!selectedClass || !selectedDivision || !selectedSubject) {
+           alert('Please select values for Class, Division, and Subject.');
+            return;
+        }
+       
+    
+        // Check if the selected combination already exists
+        if (isCombinationExists(selectedClass, selectedDivision, selectedSubject)) {
+            alert('Selected combination already exists in the table.');
+            return;
+        }
+    
+        // Display selected items in the table
+        const currentRowCount = $('#table-body tr').length;
+        const newRow = `
+            <tr>
+                <td>${currentRowCount + 1}</td>
+                <td>${selectedClass}<input type="text" value="${$("#classDropdown option:selected").val()}" name="classids" ></td>
+                <td>${selectedDivision}<input type="text" value="${$("#divisionDropdown option:selected").val()}" name="divisionids"></td>
+                <td>${selectedSubject}<input type="text" value="${$("#subjectDropdown option:selected").val()}" name="subjectids"></td>
+                <td>
+                    <button class="btn btn-danger" onclick="deleteRow(this)">Delete</button>
+                </td>
+            </tr>
+        `;
+        $('#table-body').append(newRow);
+    
+        // Clear selected values in dropdowns
+        $("#classDropdown").val("");
+        $("#divisionDropdown").val("");
+        $("#subjectDropdown").val("");
+    }
+    
+    function isCombinationExists(selectedClass, selectedDivision, selectedSubject) {
+        let exists = false;
+        $('#table-body tr').each(function () {
+            const existingClass = $(this).find('td:eq(1)').text();
+            const existingDivision = $(this).find('td:eq(2)').text();
+            const existingSubject = $(this).find('td:eq(3)').text();
+    
+            if (
+                existingClass === selectedClass &&
+                existingDivision === selectedDivision &&
+                existingSubject === selectedSubject
+            ) {
+                exists = true;
+                return false; // exit the loop if a match is found
+            }
+        });
+        return exists;
+    }
+    
+    function deleteRow(button) {
+        $(button).closest('tr').remove();
+        // Update row numbers
+        $('#table-body tr').each(function(index) {
+            $(this).find('td:first').text(index + 1);
+        });
+    }
+    
+</script>    
+
+
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#classDropdown').on('change', function () {
+            var classId = $(this).val();
+            if (classId) {
+                $.ajax({
+                    type: 'GET',
+                    url: '/get_subjects/',  // Replace with your Django view URL
+                    data: {'class_id': classId},
+                    success: function (data) {
+                        $('#subjectDropdown').empty();
+                        $.each(data, function (key, value) {
+                            $('#subjectDropdown').append('<option value="' + key + '">' + value + '</option>');
+                        });
+                    }
+                });
+            } else {
+                $('#subjectDropdown').empty();
+            }
+        });
+    });
+</script>
+
+
+
+
+{% endblock content %} 
+
+
+
+
+
+
+
+

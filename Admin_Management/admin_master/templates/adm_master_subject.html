@@ -1,0 +1,189 @@
+{% extends "base.html" %}
+{% block content  %}
+{% load static %}
+
+    <ul class="breadcrumb">
+        <li><a href="#">Master</a></li>                    
+        <li class="active">Manage Subject</li>
+    </ul>
+
+    <div class="page-title">                    
+        <h2><span class="fa fa-arrow-circle-o-left"></span> Manage Subject</h2>
+    </div>   
+    
+    <div class="page-content-wrap">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title"><strong>New Subject</strong></h4>
+                        <ul class="panel-controls">
+                            <li><a href="#" class="panel-remove"><span class="fa fa-times"></span></a></li>
+                        </ul>
+                    </div>
+                  <form method="post" action="{% url "adm_master_subject" %}">
+                    {% csrf_token %}
+                    <div class="panel-body">
+                        <div class="form-group">                                                                                       
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="fa fa-pencil"></span></span>
+                                <input type="text" placeholder="Subject Name" class="form-control" name="sub_name" required autofocus/>
+                            </div>                                            
+                        </div>
+                    </div>
+
+                    <div class="panel-heading">
+                        <h4 class="panel-title"><strong>Class</strong></h4>
+                        <ul class="panel-controls">
+                            <input type="checkbox" id="toggles" onclick="check1()"/>
+                        </ul>
+                    </div>
+
+                    <div class="panel-body">
+                        <div class="form-group"> 
+                            {% for i in class %}  
+                            <div class="col-md-12">                                                                                    
+                            <label class="check"><input type="checkbox" class="icheck" name="checkid" value="{{i.id}}"  onchange="checkAnyCheckbox()">{{i.cname}}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="panel-footer">
+                        <input type="reset" value="Clear Form" class="btn btn-default">                               
+                        <button class="btn btn-primary pull-right" id="submitBtn" disabled>Submit</button>
+                    </div>
+                  </form>
+                </div>
+             
+            </div>
+            <div class="col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading ui-draggable-handle">                                
+                            <h3 class="panel-title"><strong>View Subject</strong></h3>
+                            <ul class="panel-controls">
+                                <li><a href="#" class="panel-collapse"><span class="fa fa-angle-down"></span></a></li>
+                                <li><a href="#" class="panel-refresh"><span class="fa fa-refresh"></span></a></li>
+                                <li><a href="#" class="panel-remove"><span class="fa fa-times"></span></a></li>
+                            </ul>                                
+                    </div> 
+                
+
+                        
+                    <div class="panel-body">
+                        {% comment %} <div id="DataTables_Table_0_wrapper" class="dataTables_wrapper no-footer"><div class="dataTables_length" id="DataTables_Table_0_length"><label>Show <select name="DataTables_Table_0_length" aria-controls="DataTables_Table_0" class="form-control"><option value="10">10</option><option value="25">25</option><option value="50">50</option><option value="100">100</option></select> entries</label></div><div id="DataTables_Table_0_filter" class="dataTables_filter"><label>Search:<input type="search" class="form-control " placeholder="" aria-controls="DataTables_Table_0"></label></div> {% endcomment %}
+                        <table class="table datatable dataTable no-footer" id="DataTables_Table_0" role="grid" aria-describedby="DataTables_Table_0_info">
+                            <thead>
+                                <tr role="row"><th class="sorting_asc" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Name: activate to sort column ascending" style="width: 198px;">#</th><th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Position: activate to sort column ascending" style="width: 309px;">Subject Name</th><th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Age: activate to sort column ascending" style="width: 70px;">Status</th><th class="sorting" tabindex="0" aria-controls="DataTables_Table_0" rowspan="1" colspan="1" aria-label="Start date: activate to sort column ascending" style="width: 137px;">Action</th></tr>
+                            </thead>
+                                <tbody> 
+                                    {% for i in sub_details %}  
+                                                
+                                    <tr role="row" class="odd" id="trow">
+                                       <td class="sorting_1">{{forloop.counter}}</td>
+                                       <td>{{i.subject_name}}</td>
+                                       <td>
+                                           {% if i.status %}
+                                           <span class="label label-success">Active</span></td>
+                                           {% else %}
+                                           <span class="label label-danger">Deactive</span></td>
+                                           {% endif %}
+                                       <td>
+                                           <button class="btn btn-default btn-rounded btn-sm"  onclick="editsubject({{i.id}});"><span id="spinner{{i.id}}" class="fa fa-pencil"></span></button>
+                                           {% if i.status == 0 %}
+                                               <button class="btn btn-danger btn-rounded btn-sm" onclick="delete_row({{i.id}});"><span class="fa fa-trash-o"></span></button>  
+                                           {% endif %}
+
+                                       </td>
+                               
+                                   </tr>
+                                   {% endfor %}
+                                </tbody>
+                        </table>
+
+                        <div class="message-box animated fadeIn" data-sound="alert" id="mb-remove-row">
+                            <div class="mb-container">
+                                <div class="mb-middle">
+                                    <div class="mb-title"><span class="fa fa-times"></span> Remove <strong>Data</strong> ?</div>
+                                    <div class="mb-content">
+                                        <p>Are you sure you want to remove this row?</p>                    
+                                        <p>Press Yes if you sure.</p>
+                                    </div>
+                                    <div class="mb-footer">
+                                        <div class="pull-right">
+                                            <button class="btn btn-success btn-lg mb-control-yes">Yes</button>
+                                            <button class="btn btn-default btn-lg mb-control-close">No</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <input type="hidden" value="{{request.scheme}}://{{request.get_host}}/edit_subject/" id="sedit_url" name="">
+                        <input type="hidden" value="{{request.scheme}}://{{request.get_host}}/delete_subject/" id="sdel_url" name="">
+
+                        <div class="modal" id="modal_basic" tabindex="-1" role="dialog" aria-labelledby="defModalHead" aria-hidden="true" style="display: none;">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        
+                                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+                                        <h4 class="modal-title" id="defModalHead">Edit Subject</h4>
+                                    </div>
+
+                                    <div class="modal-body">
+                                     <div class="row">
+                                      <div class="form-group">
+                                        <div class="col-md-6 ">                                                                                                                                                        
+                                            <input type="text" class="form-control" placeholder="Subject Name" id="edit_subject">                                                    
+                                        </div>
+                                        <div class="col-md-6">                                                                                
+                                            <select class="form-control" data-style="btn-success" id="edit_status">
+                                                <option value="1">Active</option>
+                                                <option value="0">Deactive</option>
+                                                
+                                            </select>
+                                        </div>
+                                     </div>
+                                        {% for i in class %}  
+                                        <div class="col-md-12">                                                                                    
+                                            <label class="check"><input type="checkbox" class="icheck" id="edit_class" name="checkid" value="{{i.id}}"  onchange="checkAnyCheckbox()">{{i.cname}}</label>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                    
+
+                                    
+                                    <div class="panel-footer">
+                                        <button type="button" class="btn btn-default"  data-dismiss="modal"><span aria-hidden="true">Close</span><span class="sr-only">Close</span></button>  
+                                        <input type="hidden" value="" id="txid">                                   
+                                        <button class="btn btn-primary pull-right" onclick="updatesubject();">Update</button>
+                                    </div>
+                                        <input type="hidden" value="{{request.scheme}}://{{request.get_host}}/update_subject" id="up_sub_url" name=""> 
+                                                         
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        {% if success %}
+        document.addEventListener('DOMContentLoaded',function () {
+         noty({text: '{{success}}', layout: 'topRight', timeout: 2000, type: 'success'});
+       });
+       {% endif %}
+
+       {% if danger %}
+        document.addEventListener('DOMContentLoaded',function () {
+         noty({text: '{{danger}}', layout: 'topRight', timeout: 2000, type: 'error'});
+       });
+        {% endif %}  
+
+    </script>
+    
+    
+{% endblock content %}
